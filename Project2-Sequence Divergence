@@ -1,0 +1,120 @@
+#Shubham Kamboj and Nia Prabhu 
+
+
+#function to write the file contents to a dictionary
+def writeFileToList(myFile, myList):
+    seqID = None
+    sequence = []
+    infile = open(myFile ,encoding='windows-1252')
+    for line in infile: 
+        line = line.strip() #strip the line of any unnecessary content 
+        if line.startswith(">"): #if it is an identifier line 
+            if seqID is not None:  #if exist, put it in dictionary 
+                myList[seqID] = ''.join(sequence) 
+                
+            seqID = myFile
+            
+            sequence = []
+        
+            continue 
+                
+        sequence.append(line) #append sequence 
+            
+    myList[seqID] = ''.join(sequence)
+    
+#finds the pair of strains and returns in a dictionary 
+def findPair(name1, name2, list): 
+    toReturn = {}
+    for seqID, seq in list.items(): 
+        if seqID == name1: 
+            toReturn[seqID] = seq
+        if seqID == name2: 
+            toReturn[seqID] = seq
+    return toReturn
+
+#calculates the sequence divergences between two strains 
+def sequenceDivergence(myList): 
+    seq1 = list(myList.values())[0]
+    seq2 = list(myList.values())[1]
+    shortLength = min(len(seq1), len(seq2))
+    
+    similar = 0
+    different = 0
+    
+    for nuc in range(shortLength): 
+        if seq1[nuc] == seq2[nuc]: 
+            similar += 1
+        else:
+            different +=1
+    
+    seqIdentity = similar/shortLength
+    seqDivergence = 1 - seqIdentity
+    
+    return seqDivergence 
+
+
+#access files from our directory 
+from os import listdir
+from os.path import join
+
+
+nonPandDir = "Non-Pandemic Strains"
+
+nonPandemicList = {}
+PandemicList = {}
+
+#accesses the nonpandemic strains and places them in our python dictionary 
+for file in listdir(nonPandDir):
+    writeFileToList("./" + nonPandDir + "/" + file, nonPandemicList)
+    
+PandDir = "PandemicStrains"
+
+#accesses the pandemic strains and places them in our python dictionary 
+for file in listdir(PandDir):
+        writeFileToList("./" + PandDir + "/" + file, PandemicList)
+
+PandemicSet1 = findPair("./" + PandDir + "/" + "CaliforniaHA.fasta", "./" + PandDir + "/" + "GermanyMartonHA.fasta", PandemicList)
+PandemicSet2 = findPair("./" + PandDir + "/" + "MexicoHA.fasta", "./" + PandDir + "/" + "Mexico2HA.fasta", PandemicList)
+PandemicSet3 = findPair("./" + PandDir + "/" + "RhodeIslandHA.fasta", "./" + PandDir + "/" + "RussiaHA.fasta", PandemicList)
+PandemicSet4 = findPair("./" + PandDir + "/" + "TallinnHA.fasta", "./" + PandDir + "/" + "ThailandHA.fasta", PandemicList)
+PandemicSet5 = findPair("./" + PandDir + "/" + "UlaanbaatarHA.fasta", "./" + PandDir + "/" + "YamaguchiHA.fasta", PandemicList)
+PandemicSet1NA = findPair("./" + PandDir + "/" + "CaliforniaNA.fasta", "./" + PandDir + "/" + "GermanyMartonNA.fasta", PandemicList)
+PandemicSet2NA = findPair("./" + PandDir + "/" + "MexicoNA.fasta", "./" + PandDir + "/" + "Mexico2NA.fasta", PandemicList)
+PandemicSet3NA = findPair("./" + PandDir + "/" + "RhodeIslandNA.fasta", "./" + PandDir + "/" + "RussiaNA.fasta", PandemicList)
+PandemicSet4NA = findPair("./" + PandDir + "/" + "TallinnNA.fasta", "./" + PandDir + "/" + "ThailandNA.fasta", PandemicList)
+PandemicSet5NA = findPair("./" + PandDir + "/" + "UlaanbaatarNA.fasta", "./" + PandDir + "/" + "YamaguchiNA.fasta", PandemicList)
+
+nonPandemicSet1 = findPair("./" + nonPandDir + "/" + "HustonHA.fasta", "./" + nonPandDir + "/" + "MartonHA.fasta", nonPandemicList)
+nonPandemicSet2 = findPair("./" + nonPandDir + "/" + "AlbanyHA.fasta", "./" + nonPandDir + "/" + "Albany2HA.fasta", nonPandemicList)
+nonPandemicSet3 = findPair("./" + nonPandDir + "/" + "CaliforniaHA.fasta", "./" + nonPandDir + "/" + "CanterburyHA.fasta", nonPandemicList)
+nonPandemicSet4 = findPair("./" + nonPandDir + "/" + "FijiHA.fasta", "./" + nonPandDir + "/" + "Fort MonmouthHA.fasta", nonPandemicList)
+nonPandemicSet5 = findPair("./" + nonPandDir + "/" + "IowaHA.fasta", "./" + nonPandDir + "/" + "RomaHA.fasta", nonPandemicList)
+nonPandemicSet1NA = findPair("./" + nonPandDir + "/" + "HustonNA.fasta", "./" + nonPandDir + "/" + "MartonNA.fasta", nonPandemicList)
+nonPandemicSet2NA = findPair("./" + nonPandDir + "/" + "AlbanyNA.fasta", "./" + nonPandDir + "/" + "Albany2NA.fasta", nonPandemicList)
+nonPandemicSet3NA = findPair("./" + nonPandDir + "/" + "CaliforniaNA.fasta", "./" + nonPandDir + "/" + "CanterburyNA.fasta", nonPandemicList)
+nonPandemicSet4NA = findPair("./" + nonPandDir + "/" + "FijiNA.fasta", "./" + nonPandDir + "/" + "Fort MonmouthNA.fasta", nonPandemicList)
+nonPandemicSet5NA = findPair("./" + nonPandDir + "/" + "IowaNA.fasta", "./" + nonPandDir + "/" + "RomaNA.fasta", nonPandemicList)
+
+
+#prints the values for sequence divergence 
+print("PandemicSet1: " + str(sequenceDivergence(PandemicSet1)))
+print("PandemicSet2: " + str(sequenceDivergence(PandemicSet2)))
+print("PandemicSet3: " + str(sequenceDivergence(PandemicSet3)))
+print("PandemicSet4: " + str(sequenceDivergence(PandemicSet4)))
+print("PandemicSet5: " + str(sequenceDivergence(PandemicSet5)))
+print("PandemicSet1NA: " + str(sequenceDivergence(PandemicSet1NA)))
+print("PandemicSet2NA: " + str(sequenceDivergence(PandemicSet2NA)))
+print("PandemicSet3NA: " + str(sequenceDivergence(PandemicSet3NA)))
+print("PandemicSet4NA: " + str(sequenceDivergence(PandemicSet4NA)))
+print("PandemicSet5NA: " + str(sequenceDivergence(PandemicSet5NA)))
+
+print("nonPandemicSet1: " + str(sequenceDivergence(nonPandemicSet1)))
+print("nonPandemicSet2: " + str(sequenceDivergence(nonPandemicSet2)))
+print("nonPandemicSet3: " + str(sequenceDivergence(nonPandemicSet3)))
+print("nonPandemicSet4: " + str(sequenceDivergence(nonPandemicSet4)))
+print("nonPandemicSet5: " + str(sequenceDivergence(nonPandemicSet5)))
+print("nonPandemicSet1NA: " + str(sequenceDivergence(nonPandemicSet1NA)))
+print("nonPandemicSet2NA: " + str(sequenceDivergence(nonPandemicSet2NA)))
+print("nonPandemicSet3NA: " + str(sequenceDivergence(nonPandemicSet3NA)))
+print("nonPandemicSet4NA: " + str(sequenceDivergence(nonPandemicSet4NA)))
+print("nonPandemicSet5NA: " + str(sequenceDivergence(nonPandemicSet5NA)))
